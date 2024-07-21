@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://admin:3Y2kiu2F8wgqVfD2@cluster0.amfype5.mongodb.net/assignmentMongoJWT?authSource=admin&replicaSet=atlas-dwa8p0-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true');
+mongoose.connect('your_url');
 
 // Define schemas
 const AdminSchema = new mongoose.Schema({
