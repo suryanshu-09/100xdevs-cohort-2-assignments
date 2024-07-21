@@ -6,17 +6,68 @@
     let globalId = 1;
     let todoState = [];
     let oldTodoState = [];
+    let addedNum = 0;
+    let removedNum = 0;
+    let updatedNum = 0;
 
-    function addTodoToDom() {
-      
+    function toggleTodo(todo) {
+      const element = document.getElementById(todo.id);
+      if(!todo.pushed){
+        element.children[2].innerHTML = `Status: Finished`;
+        element.children[3].innerHTML = `Mark as incomplete`;
+        todo.pushed = true;
+      }else{
+        element.children[2].innerHTML = `Status: Not yet finished`;
+        element.children[3].innerHTML = `Mark as completed`;
+        todo.pushed = false;
+      }
+    }
+
+    async function fetchTodo(){
+      let data = await fetch("https://sum-server.100xdevs.com/todos");
+      let newToDos = await data.json();
+      todoState = newToDos.todos;
+      updateState(todoState);
+    }
+
+    function addTodoToDom(todo) {
+      const grandParent = document.getElementById("todos");
+      const parent = document.createElement("div");
+      const title = document.createElement("div");
+      const description = document.createElement("div");
+      const status = document.createElement("div");
+      const complete = document.createElement("button");
+      // complete.setAttribute("onclick",  `toggleTodo(${todo})`);
+      complete.onclick = () => toggleTodo(todo);
+      parent.setAttribute("id", todo.id);
+      title.innerHTML = `Title: ${todo.title}`;
+      description.innerHTML = `Description: ${todo.description}`;
+      status.innerHTML = `Status: ${todo.completed ? "Finished" : "Not yet finished"}`;
+      complete.innerHTML = "Mark as completed";
+      parent.appendChild(title);
+      parent.appendChild(description);
+      parent.appendChild(status);
+      parent.appendChild(complete);
+      grandParent.appendChild(parent);
+      document.getElementById("added").innerHTML = `Added: ${++addedNum}`
     }
 
     function removeTodoFromDom(todo) {
-      
+      const element = document.getElementById(todo.id);
+      if (element) {
+        element.parentElement.removeChild(element);
+        document.getElementById("removed").innerHTML = `Removed: ${++removedNum}`;
+      }
     }
 
     function updateTodoInDom(oldTodo, newTodo) {
-        
+      const element = document.getElementById(oldTodo.id);
+      if(element){
+        element.children[0].innerHTML = `Title: ${newTodo.title}`;
+        element.children[1].innerHTML = `Description: ${newTodo.description}`;
+        toggleTodo(newTodo);
+        document.getElementById("updated").innerHTML = `Updated: ${++updatedNum}`
+      }
     }
 
     function updateState(newTodos) {
@@ -31,7 +82,24 @@
       // calculate these 3 arrays
       // call addTodo, removeTodo, updateTodo functions on each of the
       // elements
-      oldTodoState = newTodos;
+      newTodos.forEach(todo => {
+        const found = oldTodoState.find(t => t.id === todo.id);
+        if(found === undefined){
+          added.push(todo);
+        }else{
+          updated.push([found, todo]);
+        }
+        if(found !== undefined) {
+          oldTodoState.splice(oldTodoState.indexOf(found), 1);
+          // oldTodoState = oldTodoState.filter(t => t.id !== todo.id);
+        }
+      });
+      oldTodoState.forEach(todo => deleted.push(todo));
+
+      added.forEach(todo => addTodoToDom(todo));
+      deleted.forEach(todo => removeTodoFromDom(todo));
+      updated.forEach(todos => updateTodoInDom(todos[0], todos[1]));
+      oldTodoState = [...newTodos];
     }
 
     function addTodo() {
@@ -40,9 +108,13 @@
       todoState.push({
         title: title,
         description: description,
+        completed: false,
         id: globalId++,
-      })
+        pushed: false,
+      });
       updateState(todoState);
+      document.getElementById("title").value = "";
+      document.getElementById("description").value = "";
     }
   </script>
 </head>
@@ -52,9 +124,15 @@
   <input type="text" id="description" placeholder="Todo description"></input> <br /><br />
   <button onclick="addTodo()">Add todo</button>
   <br /> <br />
+  <button onclick="fetchTodo()">Fetch Todos</button>
 
   <div id="todos">
-
+  </div>
+  <br /> <br />
+  <div id="count">
+      <div id="added"> Added: 0</div>
+      <div id="removed"> Removed: 0</div>
+      <div id="updated"> Updated: 0</div>
   </div>
 </body>
 
