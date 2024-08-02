@@ -1,0 +1,42 @@
+#navigation-bar {
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+button {
+  margin: 1em;
+  padding: 0.8em;
+  color: #FEFDF8;
+  background-color: #1C1C23;
+  border: 1px solid #7F8CC0;
+  border-radius: 4px;
+}
+
+/*button:hover {*/
+/*  opacity: 0.8;*/
+/*  background-color: #B6DAD0;*/
+/*  color: #1C1C23;*/
+/*}*/
+
+#delete-admin {
+  background-color: #dd0000;
+  border: 1px solid #1C1C23;
+  color: #FEFDF8;
+}
+
+#delete-admin:hover {
+  opacity: 0.8;
+  background-color: #1C1C23;
+  border: 1px solid #7F8CC0;
+  color: #FEFDF8;
+}
+
+/*PINK: '#DBB8BF',*/
+/*BLACK: '#1C1C23',*/
+/*WHITE: '#FEFDF8',*/
+/*GREEN: '#B6DAD0',*/
+/*PURPLE: '#7F8CC0'*/
